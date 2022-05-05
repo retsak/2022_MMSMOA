@@ -1,6 +1,6 @@
 # scrape website for all links containing files
 # and download them to the current directory
-Read-Host "This will download all presentations to the current directory... (press any key to continue)"
+Read-Host "This will download all presentations to the current directory... (press enter to continue)"
 
 $schedCreds = Get-Credential -Message "Enter your sched username (enter blank as the username for only publically available content)"
 $schedUserName = $schedCreds.UserName
