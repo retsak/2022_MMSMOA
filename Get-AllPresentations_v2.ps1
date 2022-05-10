@@ -44,6 +44,8 @@ if ($schedUserName -ne "blank") {
         -ContentType "application/x-www-form-urlencoded" `
         -Body "landing_conf=https%3A%2F%2Fmms2022atmoa.sched.com&username=$schedUserName&password=$schedPassword&login=" `
         -SessionVariable newSession | Out-Null
+
+        Write-Output "Using authenicated session."
 }
 
 $urls = @(
