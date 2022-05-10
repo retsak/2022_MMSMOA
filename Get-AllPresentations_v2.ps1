@@ -12,7 +12,7 @@ if ($FileBrowser.ShowDialog() -eq "OK") {
 }
 Read-Host "This will download all presentations to: $folder (press enter to continue)"
 
-$schedCreds = Get-Credential -Message "Enter your sched username and password (or cancel only publically available content)"
+$schedCreds = Get-Credential -Message "Enter your sched username and password (or cancel for only publically available content)"
 if ($null -eq $schedCreds.UserName) {
     $schedUserName = 'blank'
 } else {
