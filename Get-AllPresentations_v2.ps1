@@ -1,10 +1,24 @@
 # scrape website for all links containing files
 # and download them to the current directory
-Read-Host "This will download all presentations to the current directory... (press enter to continue)"
+Add-Type -AssemblyName System.Windows.Forms
+$FileBrowser = New-Object System.Windows.Forms.FolderBrowserDialog
+$FileBrowser.Description = "Select a folder"
+$FileBrowser.rootfolder = "MyComputer"
+$FileBrowser.SelectedPath = $initialDirectory
+if ($FileBrowser.ShowDialog() -eq "OK") {
+    $folder = $FileBrowser.SelectedPath
+} else {
+    break
+}
+Read-Host "This will download all presentations to: $folder (press enter to continue)"
 
-$schedCreds = Get-Credential -Message "Enter your sched username (enter blank as the username for only publically available content)"
-$schedUserName = $schedCreds.UserName
-$schedPassword =  $schedCreds.GetNetworkCredential().Password
+$schedCreds = Get-Credential -Message "Enter your sched username and password (or cancel only publically available content)"
+if ($null -eq $schedCreds.UserName) {
+    $schedUserName = 'blank'
+} else {
+    $schedUserName = $schedCreds.UserName
+    $schedPassword = $schedCreds.GetNetworkCredential().Password
+}
 if ($schedUserName -ne "blank") {
     
     ###Password is used to create a new web session variable that is used to download the files
@@ -74,14 +88,16 @@ $urls | ForEach-Object {
                         $fileName = $fileName.Replace($_, '_')
                     }
                 }
-                if (!(Test-Path $eventName)) {
-                    New-Item -Type Directory -Path $eventName
+                if (!(Test-Path "$folder\$eventName")) {
+                    New-Item -Type Directory -Path "$folder\$eventName"
                 }
-                if ($newSession) {
-                    Invoke-WebRequest $file -OutFile "$eventName\$fileName" -Verbose -WebSession $newSession
-                }
-                else {
-                    Invoke-WebRequest $file -OutFile "$eventName\$fileName" -Verbose
+                if (!(Test-Path "$folder\$eventName\$fileName")) {
+                    if ($newSession) {
+                        Invoke-WebRequest $file -OutFile "$folder\$eventName\$fileName" -Verbose -WebSession $newSession
+                    }
+                    else {
+                        Invoke-WebRequest $file -OutFile "$folder\$eventName\$fileName" -Verbose
+                    }
                 }
             }
         }
